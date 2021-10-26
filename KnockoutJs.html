@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/knockout/knockout.css">
+    <title>Knockout Js</title>
+</head>
+
+<body>
+    <div class="container">
+        <div id='simpleviewmodel'>
+            <p> Hello my name is <span data-bind="text: personName">0</span> and i am <span
+                    data-bind="text:personAge">0</span> </p>
+        </div>
+        <div id="inputWorking">
+            <input type="text" data-bind="value:firstName">
+            <input type="text" data-bind="value:lastName">
+            <p>Hello <span data-bind="text:fullName"></span></p>
+            <h3>Friends(<span data-bind="text:friends().length"></span>)</h3>
+            <div>
+                <ul data-bind=" template:{name:'friendsTemplate',foreach:friends}">
+
+                </ul>
+                <script id="friendsTemplate" type="text/html" data-bind="">
+                                            <li >
+                                                <input type="text" data-bind="value:name">
+                                                <button class="btn" data-bind="click:removeFriend">X</button>
+                                                <label><input type="checkbox" data-bind="checked:isOnTwitter"> is on Twitter</label>
+                                                
+                                                <input type="text"  data-bind="value:twitterName,visible:isOnTwitter">
+                                            </li>
+                                    </script>
+                <button class="btn-add" data-bind="click:addFriend,enable:friends().length < 4 ">addFriend</button>
+            </div>
+
+        </div>
+        <div id="knockout-app" class="card">
+            <header>
+                Good Dog Walks Inc.
+            </header>
+            <div class="card-section">
+                <h2>Hello, <span data-bind="text: userName"></span></h2>
+                <p>How many walks will we take today?</p>
+                <div class="counter-ui-container">
+                    <button class="card-btn" data-bind="click: decrease">-</button>
+                    <span class="counter" data-bind="text: count">0</span>
+                    <button class="card-btn" data-bind="click: increase">+</button>
+                </div>
+                <p>
+                    Your dog is <span> Hello/span>
+                </p>
+            </div>
+            <footer>
+                <span>Have a tail wagging day!</span>
+            </footer>
+        </div>
+    </div>
+
+</body>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.5.1/knockout-latest.js"
+    integrity="sha512-2AL/VEauKkZqQU9BHgnv48OhXcJPx9vdzxN1JrKDVc4FPU/MEE/BZ6d9l0mP7VmvLsjtYwqiYQpDskK9dG8KBA=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script>
+    var myViewModel = {
+        personName: ko.observable('Dipendra'),
+        personAge: ko.observable(26)
+    };
+    ko.applyBindings(myViewModel, document.getElementById('simpleviewmodel'));
+
+    function CounterViewModel() {
+        var self = this;
+        self.userName = ko.observable("Wayne");
+        self.count = ko.observable(0)
+        self.increase = () => {
+            var currentValue = self.count();
+            self.count(currentValue + 1);
+        };
+        self.decrease = () => {
+            var currentValue = self.count();
+            if (currentValue > 0) {
+                self.count(currentValue - 1);
+            }
+        };
+    }
+
+    const knockoutApp = document.querySelector("#knockout-app");
+    ko.applyBindings(new CounterViewModel(), knockoutApp);
+
+    //  function for the friends
+    function friend(name) {
+        return {
+            name: ko.observable(name),
+            isOnTwitter: ko.observable(false),
+            twitterName: ko.observable(),
+            removeFriend: function () {
+                inputViewModel.friends.remove(this);
+            }
+        };
+    }
+    let inputViewModel = {
+        firstName: ko.observable("Dipendra"),
+        lastName: ko.observable("Pandey"),
+        friends: ko.observableArray([new friend('Kiran'), new friend('prakash')]),
+        addFriend: function () {
+            this.friends.push(new friend('NewFriend'));
+        }
+    };
+    inputViewModel.fullName = ko.dependentObservable(function () {
+        return this.firstName() + " " + this.lastName();
+    }, inputViewModel),
+        ko.applyBindings(inputViewModel, document.getElementById("inputWorking"))
+
+</script>
+
+</html>

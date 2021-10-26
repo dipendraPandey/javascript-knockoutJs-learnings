@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-treetable/3.2.0/css/jquery.treetable.css"
+        integrity="sha512-l1bJ1VnsPD+m5ZYhfcl9PrJgbCQixXtQ/zs423QYu0w1xDGXJOSC0TmorOocaYY8md5+YMRcxZ/UgjyOSIlTYw=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <title>Tree Table</title>
+</head>
+
+<body style="background-color: darkgray;">
+
+    <table id="example1">
+        <tr data-tt-id="1">
+            <td>Parent</td>
+        </tr>
+        <tr data-tt-id="2" data-tt-parent-id="1">
+            <td>Child</td>
+        </tr>
+    </table>
+
+
+    <table id="example-basic-static" class="treetable">
+        <tbody>
+            <tr data-tt-id="0" class="branch expanded">
+                <td>app</td>
+            </tr>
+            <tr data-tt-id="1" data-tt-parent-id="0">
+                <td>controllers</td>
+            </tr>
+            <tr data-tt-id="5" data-tt-parent-id="1">
+                <td>application_controller.rb</td>
+            </tr>
+            <tr data-tt-id="2" data-tt-parent-id="0">
+                <td>helpers</td>
+            </tr>
+            <tr data-tt-id="3" data-tt-parent-id="0">
+                <td>models</td>
+            </tr>
+            <tr data-tt-id="4" data-tt-parent-id="0">
+                <td>views</td>
+            </tr>
+        </tbody>
+    </table>
+
+
+    <table id="example2">
+        <tr data-tt-id="0">
+            <td>app</td>
+        </tr>
+        <tr data-tt-id="1" data-tt-parent-id="0">
+            <td>controllers</td>
+        </tr>
+        <tr data-tt-id="5" data-tt-parent-id="1">
+            <td>application_controller.rb</td>
+        </tr>
+        <tr data-tt-id="2" data-tt-parent-id="0">
+            <td>helpers</td>
+        </tr>
+        <tr data-tt-id="3" data-tt-parent-id="0">
+            <td>models</td>
+        </tr>
+        <tr data-tt-id="4" data-tt-parent-id="0">
+            <td>views</td>
+        </tr>
+    </table>
+
+</body>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-treetable/3.2.0/jquery.treetable.js"
+    integrity="sha512-F6hdKRCotYvOPb0/9pbeJWlql7NA3R9h3K/uQnAeKoI8jy477dtZ7tgPq4EeQfAeJHxVv8HywXxmTTA2LRKcrw=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        $("#example2").treetable({expandable: true, expanderTemplate: "<a href='#'> &#8644;</a>"});
+        $("#example-basic-static").treetable();
+        $("#example1").treetable();
+    });
+
+</script>
+
+</html>

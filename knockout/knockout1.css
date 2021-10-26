@@ -1,0 +1,20 @@
+.icon-green {
+  color: green;
+}
+.icon-yellow {
+  color: yellow;
+}
+.icon-red {
+  color: red;
+  fill: red;
+}
+.icon-blue {
+  color: blue;
+  fill: blue;
+}
+.icon-golden {
+  color: goldenrod;
+}
+.hoverChosen {
+  color: red;
+}

@@ -1,0 +1,236 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" href="/knockout/knockout1.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.6.1/font/bootstrap-icons.css">
+    <title>KnockoutJs</title>
+</head>
+
+<body>
+    <div class="container">
+
+        <div id="tutorial2">
+            <h2 class="my-3">Your seat reservations <i class="bi bi-star-fill icon-yellow"></i></h2>
+            <button class="btn btn-primary btn-large" data-bind="click:addMeal, enable:seats().length < 5 ">Add
+                meal</button>
+
+            <table class=" my-2 table">
+                <thead>
+                    <tr>
+                        <th>Passenger name</th>
+                        <th>Meal</th>
+                        <th>Surcharge</th>
+                        <th>action</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <!-- Todo: Generate table body -->
+                <tbody data-bind="foreach:seats">
+                    <tr>
+                        <td> <input type="text" data-bind="value:name"></td>
+                        <td> <select
+                                data-bind="options:$root.availableMeals, value:meal,optionsText:'mealName'"></select>
+                        </td>
+
+                        <td data-bind="text:formattedPrice"></td>
+                        <td><button class=" btn btn-danger btn-small" data-bind="click:$root.removeMeal">X</button></td>
+
+                    </tr>
+                </tbody>
+            </table>
+            <h4 class="text-center" data-bind="visible:seats().length > 0">
+                Seat Booked <span class="badge badge-info" data-bind="text:seats().length"></span>
+            </h4>
+            <h3 class="text-center" data-bind="visible:totalSurcharge() > 0 ">
+                Total Charge $<span class="badge badge-primary" data-bind="text:totalSurcharge().toFixed(2)"></span>
+            </h3>
+        </div>
+        <hr>
+        <div id="tutorials3">
+            <ul class="nav nav-tabs" data-bind="foreach: folders">
+                <li class="nav-links" data-bind="text: $data,
+                           css: { selected: $data == $root.chosenFolderId() },
+                           click: $root.goToFolder"></li>
+            </ul>
+        </div>
+
+        <div id="tutorial4">
+            <h3 data-bind="text: question"></h3>
+            <p>Please distribute ☆<b data-bind="text: pointsBudget"></b> points between the following options.</p>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Option</th>
+                        <th>Importance</th>
+                    </tr>
+                </thead>
+                <tbody data-bind="foreach:answers">
+                    <tr>
+                        <td data-bind="text: answerText"></td>
+                        <td data-bind="starRating: points"></td>
+                    </tr>
+                </tbody>
+            </table>
+            <p>You've got <b data-bind="text: pointsBudget - pointsUsed()"></b> points left to use.</p>
+            <h3 data-bind="fadeVisible: pointsUsed() > pointsBudget">You've used too many points! Please remove some.
+            </h3>
+
+            <button data-bind="jqButton: { enable: pointsUsed() <= pointsBudget }, click: save">Finished</button>
+        </div>
+
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.5.1/knockout-latest.js"
+        integrity="sha512-2AL/VEauKkZqQU9BHgnv48OhXcJPx9vdzxN1JrKDVc4FPU/MEE/BZ6d9l0mP7VmvLsjtYwqiYQpDskK9dG8KBA=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.js"></script>
+    <script src="https://code.jquery.com/ui/1.13.0/jquery-ui.js"
+        integrity="sha256-xH4q8N0pEzrZMaRmd7gQVcTZiFei+HfRTBPJ1OGXC0k=" crossorigin="anonymous"></script>
+    <script>
+        // Class to represent a row in the seat reservations grid
+        function SeatReservation(name, initialMeal) {
+            var self = this;
+            self.name = name;
+            self.meal = ko.observable(initialMeal);
+            self.formattedPrice = ko.computed(function () {
+                var price = self.meal().price;
+                return price ? "$" + price.toFixed(2) : 'None';
+            });
+
+        }
+
+        // Overall viewmodel for this screen, along with initial state
+        function ReservationsViewModel() {
+            var self = this;
+            // Non-editable catalog data - would come from the server
+            self.availableMeals = [
+                {mealName: "Standard (sandwich)", price: 5.99},
+                {mealName: "Premium (lobster)", price: 34.95},
+                {mealName: "Ultimate (whole zebra)", price: 290}
+            ];
+            // Editable data
+            self.seats = ko.observableArray([
+                new SeatReservation("Steve", self.availableMeals[2]),
+                new SeatReservation("Bert", self.availableMeals[1])
+            ]);
+
+            self.addMeal = function () {
+                self.seats.push(new SeatReservation("", self.availableMeals));
+            }
+            self.removeMeal = function (seat) {
+                self.seats.remove(seat);
+            }
+            self.totalSurcharge = ko.computed(function () {
+                var total = 0;
+                for (var i = 0; i < self.seats().length; i++) {
+                    total += self.seats()[i].meal().price;
+                }
+                return total;
+            });
+
+        }
+        ko.applyBindings(new ReservationsViewModel(), document.getElementById("tutorial2"));
+
+        // next View Model
+        function WebmailViewModel() {
+            // Data
+            var self = this;
+            self.folders = ['Inbox', 'Archive', 'Sent', 'Spam'];
+            self.chosenFolderId = ko.observable();
+            // Behaviours
+            self.goToFolder = function (folder) {self.chosenFolderId(folder);};
+        };
+        ko.applyBindings(new WebmailViewModel(), document.getElementById("tutorials3"));
+
+        // next View Model
+        function Answer(text) {
+            this.answerText = text;
+            this.points = ko.observable(1);
+        }
+        ko.bindingHandlers.starRating = {
+            init: function (element, valueAccessor) {
+                $(element).addClass("starRating");
+                for (var i = 0; i < 5; i++) {
+                    $('<i class="bi bi-star-fill">').appendTo(element);
+                }
+                $("i", element).each(function (index) {
+                    $(this).hover(
+                        function () {$(this).prevAll().add(this).addClass("hoverChosen")},
+                        function () {$(this).prevAll().add(this).removeClass("hoverChosen")}
+                    ).click(function () {
+                        var observable = valueAccessor();  // Get the associated observable
+                        observable(index + 1);               // Write the new rating to it
+                    });
+                });
+            },
+            update: function (element, valueAccessor) {
+                var observable = valueAccessor();
+                $('i', element).each(function (index) {
+                    $(this).toggleClass('icon-red', index < observable());
+                });
+            }
+        };
+        ko.bindingHandlers.jqButton = {
+            init: function (element) {
+                $(element).button(); // Turns the element into a jQuery UI button
+            },
+            update: function (element, valueAccessor) {
+                var currentValue = valueAccessor();
+                // Here we just update the "disabled" state, but you could update other properties too
+                $(element).button("option", "disabled", currentValue.enable === false);
+            }
+        };
+        ko.bindingHandlers.fadeVisible = {
+            init: function (element, valueAccessor) {
+                // Start visible/invisible according to initial value
+                var shouldDisplay = valueAccessor();
+                $(element).toggle(shouldDisplay);
+            },
+            update: function (element, valueAccessor) {
+                // On update, fade in/out
+                var shouldDisplay = valueAccessor();
+                shouldDisplay ? $(element).fadeIn() : $(element).fadeOut();
+            }
+        };
+        function SurveyViewModel(question, pointsBudget, answers) {
+            this.question = question;
+            this.pointsBudget = pointsBudget;
+            this.answers = $.map(answers, function (text) {return new Answer(text)});
+            this.save = function () {
+                alert('To Do');
+            }
+            this.pointsUsed = ko.computed(function () {
+                var total = 0;
+                for (var i = 0; i < this.answers.length; i++) {
+                    total += this.answers[i].points();
+                }
+                return total;
+            }, this);
+        }
+        ko.applyBindings(new SurveyViewModel("Which factors affect your technology choices?", 10, [
+            "Functionality, compatibility, pricing - all that boring stuff",
+            "How often it is mentioned on Hacker News",
+            "Number of gradients/dropshadows on project homepage",
+            "Totally believable testimonials on project homepage"
+        ]), document.getElementById("tutorial4"));
+    </script>
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+        integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+        crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+        crossorigin="anonymous"></script>
+
+</body>
+
+</html>
